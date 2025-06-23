@@ -32,6 +32,7 @@ public class QuizService {
         quiz.setTitle(title);
         quiz.setQuestions(questions);
         quizRepo.save(quiz);
+        logger.info(" Create Quiz sucessfully: {}", quiz);
         return  new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 
@@ -58,6 +59,7 @@ public class QuizService {
                right++;
                 i++;
         }
+        logger.info(" Calculate Quiz Result: {}", quiz);
         return new ResponseEntity<>(right,HttpStatus.OK);
     }
 }
