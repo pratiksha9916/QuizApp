@@ -16,17 +16,19 @@ public class QuestionService {
     Logger logger = LoggerFactory.getLogger(QuestionService.class);
 //Add
 public Questions addQuestions(Questions questions){
-
+    logger.info("Add New Quiz Question");
     return repo.save(questions);
 }
 
 //Get all questions
 public List<Questions> getQuestions(){
+    logger.info("Get All Question list");
     return repo.findAll();
 }
 
 //Get all by category
 public List<Questions> getQuestionsByCategory(String category){
+    logger.info("Get All Question list {}",category);
     return repo.findByCategory(category);
 }
 
@@ -41,6 +43,7 @@ public List<Questions> getQuestionsByCategory(String category){
     questions1.setRight_answer(questions.getRight_answer());
     questions1.setDifficulty_level(questions.getDifficulty_level());
     questions1.setCategory(questions.getCategory());
+
         logger.info("Updated Question: {}", questions1);
 
     return questions1;
@@ -49,12 +52,13 @@ public List<Questions> getQuestionsByCategory(String category){
 
     public Boolean deleteQuestions(int id){
     if(id!=0){
+        logger.info("Attempting to delete question with ID: {}", id);
         repo.findById(id);
      
         return true;
     }
     else {
-
+        logger.info("Attempting to delete question with ID: {}", id);
         return false;
     }
     }
