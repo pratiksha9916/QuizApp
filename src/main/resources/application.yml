@@ -28,7 +28,7 @@ spring:
     name: QuizApp
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/qa_db
+    url: jdbc:postgresql://localhost:5432/dev_db
     username: postgres
     password: patil@123
 
