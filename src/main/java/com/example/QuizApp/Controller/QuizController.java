@@ -16,6 +16,7 @@ public class QuizController {
 @Autowired
     QuizService service;
     @PostMapping("/create")
+//    @PreAuthorize("hasAuthority('SCOPE_createquiz')")
     public ResponseEntity<String> createQuiz(@RequestParam String category, @RequestParam int numQ, @RequestParam String title){
        return service.CreateQuiz(category, numQ, title);
     }
