@@ -1,9 +1,8 @@
 package com.example.QuizApp.Dao;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Questions {
@@ -18,6 +17,17 @@ public class Questions {
     private  String right_answer;
     private String difficulty_level;
     private String category;
+
+    @Transient
+    private List<Answer> answers;
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
 
     public Questions() {
     }

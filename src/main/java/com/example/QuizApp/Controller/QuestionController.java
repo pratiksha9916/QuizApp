@@ -14,24 +14,25 @@ import java.util.List;
 @RestController
 
 public class QuestionController {
-@Autowired
+    @Autowired
     QuestionService service;
 
 
-@PostMapping("/addQuestions")
+    @PostMapping("/addQuestions")
 //public Questions addNewQuestions(@RequestBody Questions questions){
 //
 //    return service.addQuestions(questions);
 //}
 
-public ResponseEntity<ResponseStructure<Questions>> addNewQuestions(@RequestBody Questions questions) {
-    Questions addQuest=service.addQuestions(questions);
-    ResponseStructure<Questions> structure=new ResponseStructure<>();
-    structure.setCode(HttpStatus.OK.value());
-    structure.setMsg("Add New Question Successfully");
-    structure.setData(addQuest);
-    return new ResponseEntity<>(structure,HttpStatus.OK);
-}
+    public ResponseEntity<ResponseStructure<Questions>> addNewQuestions(@RequestBody Questions questions) {
+        Questions addQuest = service.addQuestions(questions);
+        ResponseStructure<Questions> structure = new ResponseStructure<>();
+        structure.setCode(HttpStatus.OK.value());
+        structure.setMsg("Add New Question Successfully");
+        structure.setData(addQuest);
+        return new ResponseEntity<>(structure, HttpStatus.OK);
+    }
+
     @GetMapping("/allQuestions")
     @PreAuthorize("hasAuthority('SCOPE_readquestion')")
 //    public List<Questions> getAllQuestions(Questions questions){
@@ -45,13 +46,14 @@ public ResponseEntity<ResponseStructure<Questions>> addNewQuestions(@RequestBody
         structure.setData(getQuest);
         return new ResponseEntity<>(structure, HttpStatus.ACCEPTED);
     }
+
     @GetMapping("/category/{category}")
     @PreAuthorize("hasAuthority('SCOPE_readquestion')")
 //    public List<Questions> getAllQuestionsbyCategory(@PathVariable("category") String category){
 //        return service.getQuestionsByCategory(category);
 //    }
     public ResponseEntity<ResponseStructure<List<Questions>>> getAllQuestionsbyCategory(@PathVariable("category") String category) {
-        List<Questions> getAllQuest =  service.getQuestionsByCategory(category);
+        List<Questions> getAllQuest = service.getQuestionsByCategory(category);
         ResponseStructure<List<Questions>> structure = new ResponseStructure<>();
         structure.setCode(HttpStatus.ACCEPTED.value());
         structure.setMsg("Get All Questions By Category Successfully");
@@ -65,8 +67,8 @@ public ResponseEntity<ResponseStructure<Questions>> addNewQuestions(@RequestBody
 //    return service.updateQuestions(id, qstn);
 //    }
 
-    public ResponseEntity<ResponseStructure<Questions>>  updateQuestions(@PathVariable("id") int id, @RequestBody Questions qstn) {
-        Questions updateQuest =service.updateQuestions(id, qstn);
+    public ResponseEntity<ResponseStructure<Questions>> updateQuestions(@PathVariable("id") int id, @RequestBody Questions qstn) {
+        Questions updateQuest = service.updateQuestions(id, qstn);
         ResponseStructure<Questions> structure = new ResponseStructure<>();
         structure.setCode(HttpStatus.OK.value());
         structure.setMsg("Update Question Successfully");
@@ -81,12 +83,18 @@ public ResponseEntity<ResponseStructure<Questions>> addNewQuestions(@RequestBody
 //    return service.deleteQuestions(id);
 //    }
 
-    public ResponseEntity<ResponseStructure<Boolean>>  deleteQuestionData(@PathVariable("id")int id) {
+    public ResponseEntity<ResponseStructure<Boolean>> deleteQuestionData(@PathVariable("id") int id) {
         boolean deleteQuest = service.deleteQuestions(id);
         ResponseStructure<Boolean> structure = new ResponseStructure<>();
         structure.setCode(HttpStatus.OK.value());
         structure.setMsg("Delete Question Successfully");
         structure.setData(deleteQuest);
         return new ResponseEntity<>(structure, HttpStatus.OK);
+    }
+
+    @GetMapping("/questions/{id}")
+    public Questions getQuestionsById(@PathVariable("id") int id) {
+
+        return service.getQuestionsById(id);
     }
 }

@@ -62,4 +62,9 @@ public List<Questions> getQuestionsByCategory(String category){
         return false;
     }
     }
+
+    public Questions getQuestionsById(int id){
+
+    return  repo.findById(id).get();
+    }
 }
