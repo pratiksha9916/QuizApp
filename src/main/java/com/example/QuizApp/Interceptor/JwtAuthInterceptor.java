@@ -1,13 +1,13 @@
-package com.example.QuizApp.Interceptor;
+package com.example.QuizApp.interceptor;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.nimbusds.jose.JWSAlgorithm;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,124 +16,151 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.QuizApp.Interceptor.KeyUtil.getPublicKeyFromPem;
+import static com.example.QuizApp.interceptor.KeyUtil.getPublicKeyFromPem;
 
-@Component
-public class JwtAuthInterceptor implements HandlerInterceptor {
-
-    private final String issuer = "https://dev-cu8lm6350x8ip525.us.auth0.com/oauth/token";
-    private final String audience = "https://quizapi";
-    private final String requiredScope = "readquiz updatequiz ,readquestion updatequestion deletequestion createquiz";
-    private final Algorithm algorithm = Algorithm.RSA256(getPublicKeyFromPem());
-
-    public JwtAuthInterceptor() throws Exception {
-    }
-
+//@Component
+//public class JwtAuthInterceptor implements HandlerInterceptor {
+//    //move below configurations into properties file
+//    private final String issuer = "https://dev-cu8lm6350x8ip525.us.auth0.com/";
+//    private final String audience = "https://quizapi";
+//    private final String requiredScope = "readquiz updatequiz readquestion updatequestion deletequestion createquiz";
+//
+//    private final Algorithm algorithm;
+//
+//    public JwtAuthInterceptor() throws Exception {
+//        RSAPublicKey publicKey = getPublicKeyFromPem(); // load your PEM public key
+//        this.algorithm = Algorithm.RSA256(publicKey, null);
+//    }
+//
 //    @Override
 //    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //
-//        System.out.println("Interceptor");
+//        System.out.println("Interceptor triggered");
 //
-//        String header = request.getHeader("Authorization");
+//        String authHeader = request.getHeader("Authorization");
 //
-//        System.out.println(header);
-//
-//        if (header == null || !header.startsWith("Bearer ")) {
-//            System.out.println("Authorization header missing or invalid");
+//        if (authHeader == null  || !authHeader.startsWith("Bearer ")) {
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("text/plain");
+//            response.getWriter().write("Missing or invalid Authorization header");
+//            response.getWriter().flush();
 //            return false;
 //        }
 //
+//        String token = authHeader.substring(7);
 //
+//        if (!validateToken(token)) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("text/plain");
+//            response.getWriter().write("Invalid or unauthorized token");
+//            response.getWriter().flush();
+//            return false;
+//        }
 //
-//        String token = header.substring(7).trim(); // Remove "Bearer "
+//        return true;
+//    }
 //
+//    private boolean validateToken(String token) {
+//        //verify the token using key
 //        try {
-//            RSAPublicKey publicKey = getPublicKeyFromPem();
-//
-//            Algorithm algorithm = Algorithm.RSA256(publicKey, null);
 //            JWTVerifier verifier = JWT.require(algorithm)
 //                    .withIssuer(issuer)
 //                    .withAudience(audience)
-//
 //                    .build();
 //
 //            DecodedJWT jwt = verifier.verify(token);
-//            String tokenScope = jwt.getClaim("scope").asString();
-//            if (tokenScope == null) {
-//
-//                System.out.println("First");
-//                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            String scopeClaim = jwt.getClaim("scope").asString();
+//            if (scopeClaim == null) {
+//                System.err.println("Scope claim is missing");
 //                return false;
 //            }
 //
-//            if (!hasRequiredScopes(tokenScope, requiredScope)) {
+////            String scopeClaim = jwt.getClaim("scope").asString(); // e.g., "readquiz updatequiz"
+//            Set<String> tokenScopes = new HashSet<>(Arrays.asList(scopeClaim.split(" ")));
+//            Set<String> requiredScopes = new HashSet<>(Arrays.asList(requiredScope.split(" ")));
 //
-//                System.out.println("Second");
-//                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            if (!tokenScopes.containsAll(requiredScopes)) {
+//                System.err.println("JwtAuthInterceptor: Missing required scopes");
 //                return false;
 //            }
 //
-//            // Optionally store info in request attributes
-//            request.setAttribute("user", jwt.getSubject());
 //            return true;
-//
 //        } catch (Exception e) {
-//
-//
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            System.err.println("JwtAuthInterceptor: Token verification failed");
+//            e.printStackTrace();
 //            return false;
 //        }
 //    }
-//
-//    private boolean hasRequiredScopes(String tokenScope, String requiredScopes) {
-//        // Split scopes by space, convert to sets for easy checking
-//        Set<String> tokenScopesSet = new HashSet<>(Arrays.asList(tokenScope.split(" ")));
-//        Set<String> requiredScopesSet = new HashSet<>(Arrays.asList(requiredScopes.split(" ")));
-//
-//        return tokenScopesSet.containsAll(requiredScopesSet);
-//    }
 //}
+//
+@Component
+public class JwtAuthInterceptor implements HandlerInterceptor {
+
+    private final Auth0Properties auth0Properties;
+    private final Algorithm algorithm;
+
+    @Autowired
+    public JwtAuthInterceptor(Auth0Properties auth0Properties) throws Exception {
+        this.auth0Properties = auth0Properties;
+        RSAPublicKey publicKey = getPublicKeyFromPem(auth0Properties.getPublicKeyPath());
+        this.algorithm = Algorithm.RSA256(publicKey, null);
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("Interceptor triggered");
 
-        System.out.println("Interceptor");
-
-        // Get the Authorization header
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("text/plain");
             response.getWriter().write("Missing or invalid Authorization header");
-            return false; // reject the request
-
+            response.getWriter().flush();
+            return false;
         }
 
-        // Extract token from header
-        String token = authHeader.substring(7); // remove "Bearer " prefix
+        String token = authHeader.substring(7);
 
-        System.out.println(token);
-        // Validate the token (you can implement your own logic here)
-        boolean valid = validateToken(token);
-        if (!valid) {
+        if (!validateToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid token");
-            return false; // reject the request
+            response.setContentType("text/plain");
+            response.getWriter().write("Invalid or unauthorized token");
+            response.getWriter().flush();
+            return false;
         }
 
-        System.out.println("Interceptor22");
-        // Token valid, proceed with request
         return true;
     }
 
-    // Example token validation method (you can replace this with real validation)
     private boolean validateToken(String token) {
-        // For demonstration: check token equals some fixed string or call your token validation logic
-        return "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjV3ZEpCSkZNNVVXSU1QaXBkWHdPdSJ9.eyJpc3MiOiJodHRwczovL2Rldi1jdThsbTYzNTB4OGlwNTI1LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJxazRtMld3T0V5NFNwbDhRcUF2WDFndTZHWlFHMklkQ0BjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9xdWl6YXBpIiwiaWF0IjoxNzUxMTk1MDM0LCJleHAiOjE3NTEyODE0MzQsInNjb3BlIjoicmVhZHF1aXogdXBkYXRlcXVpeiByZWFkcXVlc3Rpb24gdXBkYXRlcXVlc3Rpb24gZGVsZXRlcXVlc3Rpb24gY3JlYXRlcXVpeiIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyIsImF6cCI6InFrNG0yV3dPRXk0U3BsOFFxQXZYMWd1NkdaUUcySWRDIn0.blXDQ8XXMTUgUlbcYqHIo3qtgBTaDtx1YG75XH0cHJvt1nfjVIT8svH5KGFHQLdREKpgMDYcWWJsgiIS_h9yTCo5_GqBWiVg_oCp2itCKxbFwDl2dBG3Xd1TwldJP7BnG-YrD7fVb5Rk0JokQASl8nrjo7HoKc0y5Uvcsut9aKFgQCj5Ln-Vpj03BpDc4cxxgdekI2x3cJB-ohAlJxFn0sumlTOkeZRFvEI7tDqr9LYUDkUcv9DxuJdsLzaA2xlaE4Xsr0BSycWa8LXG99RJ-4yDKClTdh4lFiFdYp0mH6j5cMq5on6LhquPd_X0QipVpNtOVEVktrWnI_sOXvdWiA".equals(token);
+        try {
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(auth0Properties.getIssuer())
+                    .withAudience(auth0Properties.getAudience())
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            String scopeClaim = jwt.getClaim("scope").asString();
+
+            if (scopeClaim == null) {
+                System.err.println("Scope claim is missing");
+                return false;
+            }
+
+            Set<String> tokenScopes = new HashSet<>(Arrays.asList(scopeClaim.split(" ")));
+            Set<String> requiredScopes = new HashSet<>(Arrays.asList(auth0Properties.getRequiredScope().split(" ")));
+
+            if (!tokenScopes.containsAll(requiredScopes)) {
+                System.err.println("JwtAuthInterceptor: Missing required scopes");
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("JwtAuthInterceptor: Token verification failed");
+            e.printStackTrace();
+            return false;
+        }
     }
 }
-
-
-
-

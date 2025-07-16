@@ -1,12 +1,8 @@
-package com.example.QuizApp.Repository;
+package com.example.QuizApp.repository;
 
-import com.example.QuizApp.Dao.Questions;
-import com.example.QuizApp.Dao.Quiz;
+import com.example.QuizApp.dao.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {

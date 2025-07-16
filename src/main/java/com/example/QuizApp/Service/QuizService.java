@@ -1,12 +1,11 @@
-package com.example.QuizApp.Service;
+package com.example.QuizApp.service;
 
-import com.example.QuizApp.Dao.QuestionWrapper;
-import com.example.QuizApp.Dao.Questions;
-import com.example.QuizApp.Dao.Quiz;
-import com.example.QuizApp.Dao.Response;
-import com.example.QuizApp.Repository.QuestionRepository;
-import com.example.QuizApp.Repository.QuizRepository;
-import com.example.QuizApp.ResponseStructure.ResponseStructure;
+import com.example.QuizApp.dao.QuestionWrapper;
+import com.example.QuizApp.dao.Questions;
+import com.example.QuizApp.dao.Quiz;
+import com.example.QuizApp.dao.Response;
+import com.example.QuizApp.repository.QuestionRepository;
+import com.example.QuizApp.repository.QuizRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

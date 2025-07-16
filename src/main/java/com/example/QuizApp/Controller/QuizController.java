@@ -1,8 +1,8 @@
-package com.example.QuizApp.Controller;
+package com.example.QuizApp.controller;
 
-import com.example.QuizApp.Dao.QuestionWrapper;
-import com.example.QuizApp.Dao.Response;
-import com.example.QuizApp.Service.QuizService;
+import com.example.QuizApp.dao.QuestionWrapper;
+import com.example.QuizApp.dao.Response;
+import com.example.QuizApp.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,9 +1,8 @@
-package com.example.QuizApp.Repository;
+package com.example.QuizApp.repository;
 
-import com.example.QuizApp.Dao.Questions;
+import com.example.QuizApp.dao.Questions;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

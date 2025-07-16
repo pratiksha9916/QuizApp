@@ -1,4 +1,4 @@
-package com.example.QuizApp.DTO;
+package com.example.QuizApp.dto;
 
 
 import jakarta.validation.constraints.Email;
