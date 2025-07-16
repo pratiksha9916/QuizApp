@@ -1,4 +1,4 @@
-package com.example.QuizApp.Dao;
+package com.example.QuizApp.dao;
 
 public class Answer {
 

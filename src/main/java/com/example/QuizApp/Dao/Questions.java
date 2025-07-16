@@ -1,6 +1,8 @@
-package com.example.QuizApp.Dao;
+package com.example.QuizApp.dao;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 
@@ -9,13 +11,24 @@ public class Questions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotBlank(message = "Question title is mandatory")
+    @ValidQuestionTitle
     private String question_title;
+    @NotBlank(message = "Option 1 is required")
     private String option1;
+    @NotBlank(message = "Option 2 is required")
     private String option2;
+    @NotBlank(message = "Option 3 is required")
     private String option3;
+    @NotBlank(message = "Option 4 is required")
     private String option4;
+    @NotBlank(message = "Correct answer is required")
     private  String right_answer;
+    @NotBlank(message = "Difficulty level is required ")
     private String difficulty_level;
+    @NotBlank(message = "Category is required")
+    @Pattern(regexp = "java|python", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Category must be either 'java' or 'python'")
     private String category;
 
     @Transient
